@@ -2,12 +2,10 @@
 <html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dhahabi Mercado - Dashboard Corporativo</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Lucide Icons -->
+  <!-- Lucide Icons para el diseño exacto -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -18,9 +16,6 @@
     <div class="spinner"></div>
     <span id="loader-text" style="font-size: 14px; font-weight: 600;">Sincronizando datos...</span>
   </div>
-
-  <!-- OVERLAY PARA MENÚ MÓVIL -->
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
   <!-- LOGIN SCREEN -->
   <div id="login-screen">
@@ -40,8 +35,8 @@
     </div>
   </div>
 
-  <!-- Sidebar / Menú Lateral -->
-  <aside class="sidebar" id="sidebar">
+  <!-- Sidebar -->
+  <aside class="sidebar">
     <div class="brand-logo">
       <img id="app-logo" src="https://cdn.dhahabi.ae/logo/dhahabi-market-logo-gradient-white.svg" alt="Dhahabi Mercado">
     </div>
@@ -68,23 +63,17 @@
   <main class="main-content">
     
     <div class="top-bar">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <button class="btn-mobile-menu" onclick="toggleMobileSidebar()">
-          <i data-lucide="menu"></i>
-        </button>
-        <div id="view-title" class="header-title">Dashboard</div>
-      </div>
-
+      <div id="view-title" class="header-title">Dashboard</div>
       <div class="top-controls">
         <div class="theme-switch-wrapper">
-          <span class="theme-label" style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Modo Oscuro</span>
+          <span style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Modo Oscuro</span>
           <label class="switch">
             <input type="checkbox" id="theme-toggle-checkbox" checked onclick="toggleTheme()">
             <span class="slider round"></span>
           </label>
         </div>
         <button class="btn-logout-styled" onclick="cerrarSesion()">
-          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> <span class="logout-text">Salir</span>
+          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> Salir
         </button>
         <div class="user-avatar">
           <i data-lucide="user"></i>
@@ -94,7 +83,9 @@
 
     <!-- DASHBOARD VIEW -->
     <section id="view-dashboard" class="view-section active">
+      <!-- Fila Superior de Tarjetas -->
       <div class="metrics-top-grid">
+        
         <div class="card card-glow-purple">
           <div class="card-header">
             <span class="card-title">Publicados</span>
@@ -126,8 +117,10 @@
           </div>
           <div class="card-value highlight-green" id="metric-utilidad">30%</div>
         </div>
+
       </div>
 
+      <!-- Segunda Fila (PROVEEDORES) -->
       <div class="metrics-bottom-grid">
         <div class="card card-glow-purple">
           <div class="card-header">
@@ -162,7 +155,7 @@
           </table>
         </div>
       </div>
-    </section>
+    </section> <!-- ◄--- Cierre de view-dashboard -->
 
     <!-- PRODUCTOS VIEW -->
     <section id="view-productos" class="view-section">
@@ -171,6 +164,7 @@
         <button class="btn" onclick="abrirModalNuevoProducto()">+ Nuevo Producto</button>
       </div>
 
+      <!-- Barra de herramientas: Búsqueda y Filtros -->
       <div class="filter-bar card-glow-container" style="margin-top: 0; padding: 16px;">
         <div class="search-input-wrapper">
           <i data-lucide="search" style="width: 16px; height: 16px;"></i>
@@ -178,6 +172,7 @@
         </div>
 
         <div class="filter-controls">
+          <!-- Desplegable Personalizado: Categoría -->
           <div class="custom-select-wrapper">
             <div class="custom-select-trigger" id="select-trigger-categoria" onclick="toggleDropdown('dropdown-categoria')">
               <span>Todas las Categorías</span>
@@ -189,6 +184,7 @@
             <input type="hidden" id="filter-categoria" value="">
           </div>
 
+          <!-- Desplegable Personalizado: Estado -->
           <div class="custom-select-wrapper">
             <div class="custom-select-trigger" id="select-trigger-estado" onclick="toggleDropdown('dropdown-estado')">
               <span>Todos los Estados</span>
@@ -202,8 +198,9 @@
             <input type="hidden" id="filter-estado" value="">
           </div>
         </div>
-      </div>
+      </div> <!-- ◄--- Cierre de filter-bar -->
 
+      <!-- Tabla con botones de Ordenamiento en los Encabezados -->
       <div class="table-container card-glow-container" style="margin-top: 12px;">
         <table>
           <thead>
@@ -260,7 +257,7 @@
 
     <!-- CONFIGURACION VIEW -->
     <section id="view-configuracion" class="view-section">
-      <div class="card card-glow" style="max-width: 400px; margin: 0 auto;">
+      <div class="card card-glow" style="max-width: 400px;">
         <div class="form-group">
           <label>Tasa de Cambio (1 USD = ? CUP)</label>
           <input type="number" id="cfg-tasa">
@@ -269,7 +266,7 @@
           <label>Margen de Utilidad (%)</label>
           <input type="number" id="cfg-utilidad">
         </div>
-        <button class="btn" style="width:100%; justify-content:center;" onclick="guardarConfiguracion()">Actualizar Parámetros</button>
+        <button class="btn" onclick="guardarConfiguracion()">Actualizar Parámetros</button>
       </div>
     </section>
 
@@ -283,14 +280,15 @@
         <button class="btn-close-modal" onclick="closeModal('modal-producto')">✕</button>
       </div>
       
-      <div class="modal-form-grid">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
         <input type="hidden" id="prod-id">
         
-        <div class="form-group span-full">
+        <div class="form-group" style="grid-column: span 2;">
           <label>Nombre del Producto</label>
           <input type="text" id="prod-nombre" placeholder="Ej: Galletas Saltinas 200g">
         </div>
 
+        <!-- Categoría Personalizado -->
         <div class="form-group">
           <label>Categoría</label>
           <div class="custom-select-wrapper">
@@ -303,6 +301,7 @@
           </div>
         </div>
 
+        <!-- Proveedor Personalizado -->
         <div class="form-group">
           <label>Proveedor / Tienda</label>
           <div class="custom-select-wrapper">
@@ -320,6 +319,7 @@
           <input type="number" step="0.01" id="prod-costo" placeholder="0.00" oninput="calcularPreview()">
         </div>
 
+        <!-- Moneda Personalizado -->
         <div class="form-group">
           <label>Moneda Costo</label>
           <div class="custom-select-wrapper">
@@ -340,6 +340,7 @@
           <input type="text" id="prod-imagen" placeholder="Ej: 2435-1.jpg">
         </div>
 
+        <!-- Estado Personalizado -->
         <div class="form-group">
           <label>Estado del Stock</label>
           <div class="custom-select-wrapper">
@@ -372,7 +373,7 @@
     <div class="modal">
       <div class="modal-header">
         <h4>Añadir Proveedor</h4>
-        <button class="btn-close-modal" onclick="closeModal('modal-proveedor')">✕</button>
+        <button class="btn-secondary" onclick="closeModal('modal-proveedor')">✕</button>
       </div>
       <div class="form-group">
         <label>Nombre de la Tienda / Proveedor</label>
@@ -386,7 +387,7 @@
         <label>Teléfono de Contacto</label>
         <input type="text" id="prov-telefono">
       </div>
-      <button class="btn" style="width:100%; justify-content:center;" onclick="guardarProveedor()">Guardar</button>
+      <button class="btn" onclick="guardarProveedor()">Guardar</button>
     </div>
   </div>
 
@@ -395,13 +396,13 @@
     <div class="modal">
       <div class="modal-header">
         <h4>Añadir Categoría</h4>
-        <button class="btn-close-modal" onclick="closeModal('modal-categoria')">✕</button>
+        <button class="btn-secondary" onclick="closeModal('modal-categoria')">✕</button>
       </div>
       <div class="form-group">
         <label>Nombre de la Categoría</label>
         <input type="text" id="cat-nombre">
       </div>
-      <button class="btn" style="width:100%; justify-content:center;" onclick="guardarCategoria()">Guardar</button>
+      <button class="btn" onclick="guardarCategoria()">Guardar</button>
     </div>
   </div>
 
