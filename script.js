@@ -15,6 +15,23 @@ let state = {
 let productosOriginales = [];
 let ordenActual = { columna: null, direccion: 'asc' };
 
+// Control Unificado de Sidebar Móvil
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar && overlay) {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+}
+
+function handleMenuClick(viewName, element) {
+  switchView(viewName, element);
+  if (window.innerWidth <= 768) {
+    toggleSidebar();
+  }
+}
+
 function showLoader(msg = "Sincronizando datos...") {
   const txt = document.getElementById('loader-text');
   const loader = document.getElementById('app-loader');
@@ -66,6 +83,7 @@ function switchView(viewName, el) {
   document.getElementById(`view-${viewName}`).classList.add('active');
   document.getElementById('view-title').innerText = viewName.charAt(0).toUpperCase() + viewName.slice(1);
   if (el) el.classList.add('active');
+
   if (window.lucide) lucide.createIcons();
 }
 
@@ -92,7 +110,6 @@ function calcularPreview() {
 }
 
 // Renderizar la tabla de productos filtrada
-// Renderizar la tabla de productos filtrada
 function renderizarTablaProductos(lista) {
   const tbodyProd = document.getElementById('tabla-productos');
   if (!tbodyProd) return;
@@ -102,17 +119,14 @@ function renderizarTablaProductos(lista) {
     return;
   }
 
-  // Guardamos la lista actual globalmente para poder consultar por ID en la edición
   window.productosActuales = lista;
 
   tbodyProd.innerHTML = lista.map((p, index) => {
-    // Normalizar estado
     const valEstado = (p.estado || p.Estado || p.ESTADO || '').toString().trim();
     const esDisponible = valEstado.toLowerCase() === 'disponible';
     const claseBadge = esDisponible ? 'badge-success' : 'badge-danger';
     const textoMostrar = valEstado || 'Disponible';
 
-    // Se usa el p.id o en su defecto el índice del array
     const idOIndice = p.id !== undefined ? `'${p.id}'` : index;
 
     return `
@@ -131,11 +145,9 @@ function renderizarTablaProductos(lista) {
   if (window.lucide) lucide.createIcons();
 }
 
-// Función auxiliar para recuperar el producto de forma segura
 function prepararEdicion(idOIndice) {
   if (!window.productosActuales) return;
 
-  // Busca comparando los IDs con coercionar de tipo (==) o por su posición si es un índice
   const producto = window.productosActuales.find(item => item.id == idOIndice) || window.productosActuales[idOIndice];
   
   if (producto && typeof editarProducto === 'function') {
@@ -145,29 +157,27 @@ function prepararEdicion(idOIndice) {
   }
 }
 
-// Función principal de Filtrado y Ordenamiento
 function filtrarYOrdenarProductos() {
   const searchInput = document.getElementById('filter-search');
   const catInput = document.getElementById('filter-categoria');
+  const tiendaInput = document.getElementById('filter-tienda');
   const estadoInput = document.getElementById('filter-estado');
 
   const textoBusqueda = searchInput ? searchInput.value.toLowerCase().trim() : '';
   const catSeleccionada = catInput ? catInput.value : '';
+  const tiendaSeleccionada = tiendaInput ? tiendaInput.value : '';
   const estadoSeleccionado = estadoInput ? estadoInput.value : '';
 
-  // 1. Filtrar
   let resultado = productosOriginales.filter(prod => {
     const coincideNombre = prod.nombre ? prod.nombre.toLowerCase().includes(textoBusqueda) : false;
-    const coincideTienda = prod.tienda ? prod.tienda.toLowerCase().includes(textoBusqueda) : false;
-    const coincideTexto = coincideNombre || coincideTienda;
 
     const coincideCat = catSeleccionada === "" || prod.categoria === catSeleccionada;
+    const coincideTienda = tiendaSeleccionada === "" || prod.tienda === tiendaSeleccionada;
     const coincideEstado = estadoSeleccionado === "" || prod.estado === estadoSeleccionado;
 
-    return coincideTexto && coincideCat && coincideEstado;
+    return coincideNombre && coincideCat && coincideTienda && coincideEstado;
   });
 
-  // 2. Ordenar
   if (ordenActual.columna === 'nombre') {
     resultado.sort((a, b) => {
       const valA = a.nombre ? a.nombre.toLowerCase() : '';
@@ -182,11 +192,9 @@ function filtrarYOrdenarProductos() {
     });
   }
 
-  // 3. Renderizar la tabla filtrada
   renderizarTablaProductos(resultado);
 }
 
-// Alternar ordenamiento por columnas (Nombre / Precio)
 function cambiarOrden(columna) {
   if (ordenActual.columna === columna) {
     ordenActual.direccion = ordenActual.direccion === 'asc' ? 'desc' : 'asc';
@@ -209,7 +217,6 @@ function cambiarOrden(columna) {
 }
 
 function renderApp() {
-  // Manejo seguro de config en caso de que venga como Array u Objeto vacio
   let configObj = {};
   if (Array.isArray(state.config) && state.config.length > 0) {
     configObj = state.config[0];
@@ -217,7 +224,6 @@ function renderApp() {
     configObj = state.config;
   }
 
-  // Normalizar claves a minúsculas para evitar fallos por nombres de columnas en Excel
   const keys = {};
   Object.keys(configObj).forEach(k => { keys[k.toLowerCase()] = configObj[k]; });
 
@@ -226,16 +232,13 @@ function renderApp() {
 
   state.config = { tasaUSD: tasa, margenUtilidad: utilidad };
 
-  // Asignar arreglos de forma segura por si vienen como undefined
   state.productos = state.productos || [];
   state.proveedores = state.proveedores || [];
   state.categorias = state.categorias || [];
   state.historial = state.historial || [];
 
-  // Asegurar lista sincronizada
   productosOriginales = [...state.productos];
 
-  // Contadores
   const pub = state.productos.filter(p => ((p.estado || p.Estado || p.ESTADO) || '').toString().trim().toLowerCase() === 'disponible').length;
   const ago = state.productos.filter(p => ((p.estado || p.Estado || p.ESTADO) || '').toString().trim().toLowerCase() === 'agotado').length;
 
@@ -248,7 +251,7 @@ function renderApp() {
   if (document.getElementById('cfg-tasa')) document.getElementById('cfg-tasa').value = state.config.tasaUSD;
   if (document.getElementById('cfg-utilidad')) document.getElementById('cfg-utilidad').value = state.config.margenUtilidad;
 
-  // Llenar Desplegable de Categorías en Filtros
+  // Categorías Filtro
   const dropdownCat = document.getElementById('dropdown-categoria');
   if (dropdownCat) {
     const inputOculto = document.getElementById('filter-categoria');
@@ -272,7 +275,31 @@ function renderApp() {
     dropdownCat.innerHTML = opcionesHTML;
   }
 
-  // Llenar Desplegable de Categorías en Modal Producto
+  // Proveedores Filtro
+  const dropdownTienda = document.getElementById('dropdown-tienda');
+  if (dropdownTienda) {
+    const inputOculto = document.getElementById('filter-tienda');
+    const valorActual = inputOculto ? inputOculto.value : '';
+
+    let opcionesHTML = `
+      <div class="custom-option ${valorActual === '' ? 'selected' : ''}" 
+           onclick="seleccionarOpcion('filter-tienda', '', 'Todos los Proveedores', 'select-trigger-tienda')">
+        Todos los Proveedores
+      </div>`;
+
+    opcionesHTML += state.proveedores.map(p => {
+      const nombreProv = p.nombre || p.Nombre || '';
+      return `
+        <div class="custom-option ${valorActual === nombreProv ? 'selected' : ''}" 
+             onclick="seleccionarOpcion('filter-tienda', '${nombreProv}', '${nombreProv}', 'select-trigger-tienda')">
+          ${nombreProv}
+        </div>`;
+    }).join('');
+
+    dropdownTienda.innerHTML = opcionesHTML;
+  }
+
+  // Categorías Modal
   const dropdownProdCat = document.getElementById('dropdown-prod-categoria');
   if (dropdownProdCat) {
     dropdownProdCat.innerHTML = state.categorias.map(c => {
@@ -285,7 +312,7 @@ function renderApp() {
     }).join('');
   }
 
-  // Llenar Desplegable de Proveedores en Modal Producto
+  // Proveedores Modal
   const dropdownProdTienda = document.getElementById('dropdown-prod-tienda');
   if (dropdownProdTienda) {
     dropdownProdTienda.innerHTML = state.proveedores.map(p => {
@@ -298,10 +325,9 @@ function renderApp() {
     }).join('');
   }
 
-  // Renderizar tabla principal
   filtrarYOrdenarProductos();
 
-  // Tablas secundarias con normalización de mayúsculas/minúsculas
+  // Proveedores Tabla
   const tbodyProv = document.getElementById('tabla-proveedores');
   if (tbodyProv) {
     tbodyProv.innerHTML = state.proveedores.map(p => `
@@ -314,6 +340,7 @@ function renderApp() {
     `).join('');
   }
 
+  // Categorías Tabla
   const tbodyCat = document.getElementById('tabla-categorias');
   if (tbodyCat) {
     tbodyCat.innerHTML = state.categorias.map(c => `
@@ -362,7 +389,6 @@ function abrirModalNuevoProducto() {
   document.getElementById('prod-costo').value = '';
   document.getElementById('prod-imagen').value = '';
 
-  // Establecer valores por defecto en los selectores personalizados
   const catDefecto = state.categorias.length > 0 ? state.categorias[0].nombre : '';
   const provDefecto = state.proveedores.length > 0 ? state.proveedores[0].nombre : '';
 
@@ -382,7 +408,6 @@ function editarProducto(p) {
   document.getElementById('prod-costo').value = p.costo || '';
   document.getElementById('prod-imagen').value = p.imagen || '';
 
-  // Sincronizar selectores personalizados con los datos del producto a editar
   seleccionarOpcion('prod-categoria', p.categoria || '', p.categoria || 'Seleccione Categoría', 'select-trigger-prod-categoria');
   seleccionarOpcion('prod-tienda', p.tienda || '', p.tienda || 'Seleccione Proveedor', 'select-trigger-prod-tienda');
   seleccionarOpcion('prod-moneda', p.moneda || 'USD', p.moneda || 'USD', 'select-trigger-prod-moneda');
@@ -445,7 +470,7 @@ async function guardarProducto() {
       fecha: new Date().toISOString(),
       nombre: item.nombre,
       tienda: item.tienda,
-      estado: item.estado, // ◄--- REGISTRA EL ESTADO EN EL HISTORIAL
+      estado: item.estado,
       precioanteriorcup: precioAnteriorCUP,
       precionuevocup: precioNuevoCUP
     });
@@ -502,9 +527,7 @@ async function guardarConfiguracion() {
   await APIRequest('updateConfig', { tasaUSD, margenUtilidad });
 }
 
-// Abrir y cerrar el desplegable personalizado
 function toggleDropdown(id) {
-  // Cerrar otros dropdowns abiertos
   document.querySelectorAll('.custom-options').forEach(opt => {
     if (opt.id !== id) opt.classList.remove('open');
   });
@@ -513,13 +536,21 @@ function toggleDropdown(id) {
   if (options) options.classList.toggle('open');
 }
 
-// Seleccionar una opción del menú personalizado
 function seleccionarOpcion(inputId, valor, textoVisible, triggerId) {
   const inputHidden = document.getElementById(inputId);
   if (inputHidden) inputHidden.value = valor;
 
   const trigger = document.getElementById(triggerId);
-  if (trigger) trigger.querySelector('span').innerText = textoVisible;
+  if (trigger) {
+    trigger.querySelector('span').innerText = textoVisible;
+    
+    // Feedback visual de filtro activo
+    if (valor !== "") {
+      trigger.classList.add('active-filter');
+    } else {
+      trigger.classList.remove('active-filter');
+    }
+  }
 
   const dropdown = trigger ? trigger.nextElementSibling : null;
   if (dropdown) {
@@ -531,13 +562,12 @@ function seleccionarOpcion(inputId, valor, textoVisible, triggerId) {
     if (opcionSeleccionada) opcionSeleccionada.classList.add('selected');
   }
 
-  // Ejecutar el filtrado SOLO si el cambio proviene de la barra de filtros principal
-  if (inputId === 'filter-categoria' || inputId === 'filter-estado') {
+  if (inputId === 'filter-categoria' || inputId === 'filter-tienda' || inputId === 'filter-estado') {
     filtrarYOrdenarProductos();
   }
 }
 
-// Cerrar los desplegables si se hace clic fuera de ellos
+// Event Listeners Globales
 window.addEventListener('click', function(e) {
   if (!e.target.closest('.custom-select-wrapper')) {
     document.querySelectorAll('.custom-options').forEach(opt => opt.classList.remove('open'));
