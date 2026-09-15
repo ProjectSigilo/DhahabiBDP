@@ -63,19 +63,55 @@ function cerrarSesion() {
   location.reload();
 }
 
-function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  
-  document.documentElement.setAttribute('data-theme', newTheme);
-  
+// Función corregida para actualizar los logos sin problemas de caché ni filtros
+function actualizarLogos(theme) {
   const logoImg = document.getElementById('app-logo');
   const loginLogo = document.getElementById('login-logo');
-  const targetLogo = newTheme === 'dark' ? LOGO_DARK_THEME : LOGO_LIGHT_THEME;
-  
-  if (logoImg) logoImg.src = targetLogo;
-  if (loginLogo) loginLogo.src = targetLogo;
+  const targetLogo = theme === 'dark' ? LOGO_DARK_THEME : LOGO_LIGHT_THEME;
+
+  const timestamp = new Date().getTime();
+  const logoUrlConCache = targetLogo + '?v=' + timestamp;
+
+  if (logoImg) {
+    logoImg.style.filter = 'none';
+    logoImg.src = logoUrlConCache;
+  }
+  if (loginLogo) {
+    loginLogo.style.filter = 'none';
+    loginLogo.src = logoUrlConCache;
+  }
 }
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+  document.documentElement.setAttribute('data-theme', newTheme);
+  actualizarLogos(newTheme);
+
+  // Guardar la preferencia
+  localStorage.setItem('dhahabi_theme', newTheme);
+}
+
+// Carga inicial al refrescar o abrir la app
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('dhahabi_theme') || 'dark';
+  
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  const themeCheckbox = document.getElementById('theme-toggle-checkbox');
+  if (themeCheckbox) {
+    themeCheckbox.checked = (savedTheme === 'dark');
+  }
+
+  actualizarLogos(savedTheme);
+
+  if (sessionStorage.getItem('dhahabi_auth') === 'true') {
+    document.getElementById('login-screen').style.display = 'none';
+    initData();
+  }
+  if (window.lucide) lucide.createIcons();
+});
 
 function switchView(viewName, el) {
   document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
@@ -109,7 +145,7 @@ function calcularPreview() {
   document.getElementById('preview-precio').innerText = `$${calcularVenta(costo, moneda)} CUP`;
 }
 
-// Renderizar la tabla de productos filtrada
+// Renderizar la tabla de productos filtrada con data-label para responsive
 function renderizarTablaProductos(lista) {
   const tbodyProd = document.getElementById('tabla-productos');
   if (!tbodyProd) return;
@@ -131,13 +167,13 @@ function renderizarTablaProductos(lista) {
 
     return `
       <tr>
-        <td><img src="${URL_BASE_IMAGENES + (p.imagen || '')}" class="product-img" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2394A3B8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><rect width=\'18\' height=\'18\' x=\'3\' y=\'3\' rx=\'2\' ry=\'2\'/><circle cx=\'9\' cy=\'9\' r=\'2\'/><path d=\'m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\'/></svg>';"></td>
-        <td><strong>${p.nombre || ''}</strong><br><small style="color:var(--text-muted)">${p.categoria || ''}</small></td>
-        <td>${p.tienda || ''}</td>
-        <td>${p.costo || 0} ${p.moneda || ''}</td>
-        <td style="color:#38BDF8; font-weight:700;">$${typeof calcularVenta === 'function' ? calcularVenta(p.costo, p.moneda) : 0} CUP</td>
-        <td><span class="badge ${claseBadge}">${textoMostrar}</span></td>
-        <td><button class="btn-secondary" style="padding:4px 8px;" onclick="prepararEdicion(${idOIndice})">Editar</button></td>
+        <td data-label="Imagen"><img src="${URL_BASE_IMAGENES + (p.imagen || '')}" class="product-img product-img-clickable" alt="${p.nombre || ''}" onclick="ampliarImagen('${URL_BASE_IMAGENES + (p.imagen || '')}', '${(p.nombre || '').replace(/'/g, "\\'")}')"  onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2394A3B8\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><rect width=\'18\' height=\'18\' x=\'3\' y=\'3\' rx=\'2\' ry=\'2\'/><circle cx=\'9\' cy=\'9\' r=\'2\'/><path d=\'m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21\'/></svg>';"></td>        
+        <td data-label="Producto"><strong>${p.nombre || ''}</strong><br><small style="color:var(--text-muted)">${p.categoria || ''}</small></td>
+        <td data-label="Tienda">${p.tienda || ''}</td>
+        <td data-label="Costo Origen">${p.costo || 0} ${p.moneda || ''}</td>
+        <td data-label="Venta CUP" style="color:#38BDF8; font-weight:700;">$${typeof calcularVenta === 'function' ? calcularVenta(p.costo, p.moneda) : 0} CUP</td>
+        <td data-label="Estado"><span class="badge ${claseBadge}">${textoMostrar}</span></td>
+        <td data-label="Acciones"><button class="btn-secondary" style="padding:4px 8px;" onclick="prepararEdicion(${idOIndice})">Editar</button></td>
       </tr>
     `;
   }).join('');
@@ -351,7 +387,7 @@ function renderApp() {
     `).join('');
   }
 
-  // Historial
+ // Historial
   const todayStr = new Date().toISOString().split('T')[0];
   const cambiosHoy = state.historial.filter(h => h.fecha && h.fecha.startsWith(todayStr));
   const tbodyHist = document.getElementById('tabla-cambios-hoy');
@@ -367,19 +403,35 @@ function renderApp() {
 
       return `
         <tr>
-          <td>${new Date(h.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
-          <td><strong>${h.nombre || h.Nombre || ''}</strong></td>
-          <td>${h.tienda || h.Tienda || ''}</td>
-          <td><span class="badge ${estadoBadgeClass}">${estadoTexto}</span></td>
-          <td>$${prev} CUP</td>
-          <td>$${curr} CUP</td>
-          <td><span class="badge ${diffClass}">${diff > 0 ? '+' : ''}${diff} CUP</span></td>
+          <td data-label="Fecha/Hora">${new Date(h.fecha).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</td>
+          <td data-label="Producto"><strong>${h.nombre || h.Nombre || ''}</strong></td>
+          <td data-label="Tienda">${h.tienda || h.Tienda || ''}</td>
+          <td data-label="Estado"><span class="badge ${estadoBadgeClass}">${estadoTexto}</span></td>
+          <td data-label="Precio Anter. (CUP)">$${prev} CUP</td>
+          <td data-label="Precio Nuevo (CUP)">$${curr} CUP</td>
+          <td data-label="Diferencia"><span class="badge ${diffClass}">${diff > 0 ? '+' : ''}${diff} CUP</span></td>
         </tr>
       `;
     }).join('') : `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Sin cambios registrados el día de hoy</td></tr>`;
   }
 
   if (window.lucide) lucide.createIcons();
+}
+
+function ampliarImagen(urlImagen, nombreProducto) {
+  const imgElem = document.getElementById('lightbox-img-src');
+  const titleElem = document.getElementById('lightbox-img-title');
+  
+  if (imgElem) imgElem.src = urlImagen;
+  if (titleElem) titleElem.innerText = nombreProducto || '';
+  
+  openModal('modal-visor-imagen');
+}
+
+function cerrarVisorImagen(event) {
+  if (event.target.id === 'modal-visor-imagen') {
+    closeModal('modal-visor-imagen');
+  }
 }
 
 function abrirModalNuevoProducto() {
@@ -417,6 +469,7 @@ function editarProducto(p) {
   openModal('modal-producto');
 }
 
+// Función corregida para manejar errores adecuadamente
 async function APIRequest(action, payload = {}) {
   showLoader("Guardando cambios...");
   try {
@@ -429,8 +482,11 @@ async function APIRequest(action, payload = {}) {
     });
     return await res.json();
   } catch (err) {
-    console.warn("Respuesta procesada:", err);
-    return { status: 'success' };
+    console.error("Error al comunicarse con la API:", err);
+    return { 
+      status: 'error', 
+      message: err.message || 'Error de conexión con Google Sheets.' 
+    };
   } finally {
     hideLoader();
   }
@@ -589,11 +645,3 @@ async function initData() {
     hideLoader();
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (sessionStorage.getItem('dhahabi_auth') === 'true') {
-    document.getElementById('login-screen').style.display = 'none';
-    initData();
-  }
-  if (window.lucide) lucide.createIcons();
-});
