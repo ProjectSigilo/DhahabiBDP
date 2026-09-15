@@ -77,7 +77,7 @@
         <div class="theme-switch-wrapper">
           <span class="theme-label" style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Modo Oscuro</span>
           <label class="switch">
-            <input type="checkbox" id="theme-toggle-checkbox" checked onclick="toggleTheme()">
+            <input type="checkbox" id="theme-toggle-checkbox" checked onchange="toggleTheme()">
             <span class="slider round"></span>
           </label>
         </div>
@@ -213,7 +213,6 @@
         </div>
       </div>
 
-      <!-- Tabla de Productos -->
       <div class="table-container card-glow-container table-glow-container" style="margin-top: 16px;">
         <table class="data-table">
           <thead>
@@ -230,7 +229,7 @@
           <tbody id="tabla-productos"></tbody>
         </table>
       </div>
-    </section>
+    </section> 
 
     <!-- PROVEEDORES VIEW -->
     <section id="view-proveedores" class="view-section">
@@ -372,6 +371,15 @@
       </button>
     </div>
   </div>
+
+   <!-- MODAL VISOR DE IMAGEN AMPLIA -->
+<div class="modal-overlay" id="modal-visor-imagen" onclick="cerrarVisorImagen(event)">
+  <div class="image-lightbox-content" onclick="event.stopPropagation()">
+    <button class="btn-close-lightbox" onclick="closeModal('modal-visor-imagen')">&times;</button>
+    <img id="lightbox-img-src" src="" alt="Imagen del producto ampliada">
+    <div id="lightbox-img-title" class="lightbox-caption"></div>
+  </div>
+</div>
 
   <!-- MODAL PROVEEDOR -->
   <div class="modal-overlay" id="modal-proveedor">
