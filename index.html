@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Dhahabi Mercado - BDP</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <title>Dhahabi Mercado - BDP Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -14,30 +16,28 @@
 
   <div id="app-loader">
     <div class="spinner"></div>
-    <span id="loader-text" style="font-size: 14px; font-weight: 600;">Sincronizando datos...</span>
+    <span id="loader-text" style="font-size: 15px; font-weight: 700; color: #F8FAFC;">Sincronizando datos...</span>
   </div>
 
-  <!-- Overlay para menú en dispositivos móviles -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
   <div id="login-screen">
     <div class="login-box">
-      <img id="login-logo" src="https://cdn.dhahabi.ae/logo/dhahabi-market-logo-gradient-white.svg" style="max-width: 160px; margin-bottom: 24px;">
+      <img id="login-logo" src="https://cdn.dhahabi.ae/logo/dhahabi-market-logo-gradient-white.svg" style="max-width: 170px; margin-bottom: 28px;">
       <form onsubmit="autenticar(event)">
-        <div class="form-group">
+        <div class="form-group" style="text-align: left;">
           <label>Usuario</label>
           <input type="text" id="login-user" placeholder="Usuario" required>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="text-align: left; margin-top: 12px;">
           <label>Contraseña</label>
           <input type="password" id="login-pass" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn" style="width: 100%; justify-content: center; margin-top: 8px;">Acceder</button>
+        <button type="submit" class="btn" style="width: 100%; justify-content: center; margin-top: 16px; padding: 12px;">Acceder</button>
       </form>
     </div>
   </div>
 
-  <!-- Sidebar / Menú Lateral Único -->
   <aside class="sidebar" id="sidebar">
     <div class="brand-logo">
       <img id="app-logo" src="https://cdn.dhahabi.ae/logo/dhahabi-market-logo-gradient-white.svg" alt="Dhahabi Mercado">
@@ -45,7 +45,7 @@
     </div>
     <ul class="menu">
       <li class="menu-item active" onclick="handleMenuClick('dashboard', this)">
-        <i data-lucide="home"></i> <span>Dashboard</span>
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
       </li>
       <li class="menu-item" onclick="handleMenuClick('productos', this)">
         <i data-lucide="package"></i> <span>Productos</span>
@@ -62,11 +62,10 @@
     </ul>
   </aside>
 
-  <!-- Main Content -->
   <main class="main-content">
     
     <div class="top-bar">
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 14px;">
         <button class="mobile-menu-btn" onclick="toggleSidebar()">
           <i data-lucide="menu"></i>
         </button>
@@ -75,7 +74,7 @@
 
       <div class="top-controls">
         <div class="theme-switch-wrapper">
-          <span class="theme-label" style="font-size: 13px; font-weight: 500; color: var(--text-muted);">Modo Oscuro</span>
+          <span class="theme-label" style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">Modo Oscuro</span>
           <label class="switch">
             <input type="checkbox" id="theme-toggle-checkbox" checked onchange="toggleTheme()">
             <span class="slider round"></span>
@@ -85,59 +84,64 @@
           <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> <span class="logout-text">Salir</span>
         </button>
         <div class="user-avatar">
-          <i data-lucide="user"></i>
+          <i data-lucide="user" style="width: 20px; height: 20px;"></i>
         </div>
       </div>
     </div>
 
-    <!-- DASHBOARD VIEW -->
     <section id="view-dashboard" class="view-section active">
       <div class="metrics-top-grid">
         <div class="card card-glow-purple">
           <div class="card-header">
             <span class="card-title">Publicados</span>
-            <i data-lucide="box" style="color: #C084FC;"></i>
+            <div class="card-icon-wrapper"><i data-lucide="box"></i></div>
           </div>
           <div class="card-value" id="metric-publicados">0</div>
+          <div class="card-subtext">+3 nuevos hoy</div>
         </div>
 
         <div class="card card-glow-amber">
           <div class="card-header">
             <span class="card-title">Agotados</span>
-            <i data-lucide="alert-triangle" style="color: #F59E0B;"></i>
+            <div class="card-icon-wrapper"><i data-lucide="alert-triangle"></i></div>
           </div>
           <div class="card-value" id="metric-agotados">0</div>
+          <div class="card-subtext">Sin alertas pendientes</div>
         </div>
 
-        <div class="card card-glow-indigo">
+        <div class="card card-glow-blue">
           <div class="card-header">
             <span class="card-title">Tasa de Cambio</span>
-            <i data-lucide="repeat" style="color: #818CF8;"></i>
+            <div class="card-icon-wrapper"><i data-lucide="repeat"></i></div>
           </div>
-          <div class="card-value highlight-cyan" id="metric-tasa">1 USD = $680 CUP</div>
+          <div class="card-value" style="font-size: 22px; color: #60A5FA;" id="metric-tasa">1 USD = $680 CUP</div>
+          <div class="card-subtext" style="color: #60A5FA;">Mercado Informal</div>
         </div>
 
-        <div class="card card-glow-cyan">
+        <div class="card card-glow-emerald">
           <div class="card-header">
             <span class="card-title">% Utilidad</span>
-            <i data-lucide="trending-up" style="color: #34D399;"></i>
+            <div class="card-icon-wrapper"><i data-lucide="trending-up"></i></div>
           </div>
-          <div class="card-value highlight-green" id="metric-utilidad">30%</div>
+          <div class="card-value" style="color: #34D399;" id="metric-utilidad">30%</div>
+          <svg class="sparkline-svg" viewBox="0 0 100 30" fill="none" stroke="#34D399" stroke-width="2.5">
+            <path d="M0 25 Q 20 10, 40 18 T 80 5 T 100 2" />
+          </svg>
         </div>
       </div>
 
       <div class="metrics-bottom-grid">
-        <div class="card card-glow-purple">
+        <div class="card card-glow-rose">
           <div class="card-header">
             <span class="card-title">Proveedores</span>
-            <i data-lucide="git-fork" style="color: #F43F5E;"></i>
+            <div class="card-icon-wrapper"><i data-lucide="git-fork"></i></div>
           </div>
           <div class="card-value" id="metric-proveedores">0</div>
+          <div class="card-subtext">Activos</div>
         </div>
       </div>
 
-      <!-- Productos Modificados Hoy -->
-      <div class="card-glow-container table-glow-container">
+      <div class="card-glow-container">
         <div class="section-header">
           <h3>Productos Modificados Hoy</h3>
           <span class="badge-live"><span class="pulse-dot"></span> En vivo</span>
@@ -162,46 +166,41 @@
       </div>
     </section>
 
-    <!-- PRODUCTOS VIEW -->
     <section id="view-productos" class="view-section">
       <div class="section-header">
         <h3>Gestión de Productos</h3>
-        <button class="btn" onclick="abrirModalNuevoProducto()">+ Nuevo Producto</button>
+        <button class="btn" onclick="abrirModalNuevoProducto()"><i data-lucide="plus"></i> Nuevo Producto</button>
       </div>
 
-      <!-- Filtros con Z-Index superior -->
-      <div class="filter-bar-container card-glow-container">
+      <div class="filter-bar-container card-glow-container" style="padding: 16px !important;">
         <div class="search-input-wrapper">
-          <i data-lucide="search" style="width: 14px; height: 16px;"></i>
+          <i data-lucide="search" style="width: 18px; height: 18px;"></i>
           <input type="text" id="filter-search" placeholder="Buscar por nombre..." oninput="filtrarYOrdenarProductos()">
         </div>
 
         <div class="filter-controls-group">
-          <!-- Filtro Categoria -->
-          <div class="custom-select-wrapper pos-1">
+          <div class="custom-select-wrapper">
             <div class="custom-select-trigger" id="select-trigger-categoria" onclick="toggleDropdown('dropdown-categoria')">
               <span>Todas las Categorías</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-categoria"></div>
             <input type="hidden" id="filter-categoria" value="">
           </div>
 
-          <!-- Filtro Proveedor -->
-          <div class="custom-select-wrapper pos-2">
+          <div class="custom-select-wrapper">
             <div class="custom-select-trigger" id="select-trigger-tienda" onclick="toggleDropdown('dropdown-tienda')">
               <span>Todos los Proveedores</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-tienda"></div>
             <input type="hidden" id="filter-tienda" value="">
           </div>
 
-          <!-- Filtro Estado -->
-          <div class="custom-select-wrapper pos-3">
+          <div class="custom-select-wrapper">
             <div class="custom-select-trigger" id="select-trigger-estado" onclick="toggleDropdown('dropdown-estado')">
               <span>Todos los Estados</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-estado">
               <div class="custom-option selected" onclick="seleccionarOpcion('filter-estado', '', 'Todos los Estados', 'select-trigger-estado')">Todos los Estados</div>
@@ -213,15 +212,15 @@
         </div>
       </div>
 
-      <div class="table-container card-glow-container table-glow-container" style="margin-top: 16px;">
+      <div class="table-container card-glow-container desktop-only-table">
         <table class="data-table">
           <thead>
             <tr>
               <th>Imagen</th>
-              <th class="sortable" onclick="cambiarOrden('nombre')">Producto <span id="sort-icon-nombre" class="sort-icon">⇅</span></th>
+              <th style="cursor: pointer;" onclick="cambiarOrden('nombre')">Producto <span id="sort-icon-nombre">⇅</span></th>
               <th>Tienda</th>
               <th>Costo Origen</th>
-              <th class="sortable" onclick="cambiarOrden('precio')">Venta CUP <span id="sort-icon-precio" class="sort-icon">⇅</span></th>
+              <th style="cursor: pointer;" onclick="cambiarOrden('precio')">Venta CUP <span id="sort-icon-precio">⇅</span></th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -229,15 +228,16 @@
           <tbody id="tabla-productos"></tbody>
         </table>
       </div>
+
+      <div id="mobile-products-list" class="mobile-only-cards"></div>
     </section> 
 
-    <!-- PROVEEDORES VIEW -->
     <section id="view-proveedores" class="view-section">
       <div class="section-header">
         <h3>Proveedores Registrados</h3>
-        <button class="btn" onclick="openModal('modal-proveedor')">+ Nuevo Proveedor</button>
+        <button class="btn" onclick="openModal('modal-proveedor')"><i data-lucide="plus"></i> Nuevo Proveedor</button>
       </div>
-      <div class="table-container card-glow-container table-glow-container">
+      <div class="table-container card-glow-container">
         <table class="data-table">
           <thead>
             <tr><th>ID</th><th>Nombre / Tienda</th><th>Ubicación</th><th>Teléfono</th></tr>
@@ -247,13 +247,12 @@
       </div>
     </section>
 
-    <!-- CATEGORIAS VIEW -->
     <section id="view-categorias" class="view-section">
       <div class="section-header">
         <h3>Categorías Registradas</h3>
-        <button class="btn" onclick="openModal('modal-categoria')">+ Nueva Categoría</button>
+        <button class="btn" onclick="openModal('modal-categoria')"><i data-lucide="plus"></i> Nueva Categoría</button>
       </div>
-      <div class="table-container card-glow-container table-glow-container">
+      <div class="table-container card-glow-container">
         <table class="data-table">
           <thead>
             <tr><th>ID</th><th>Categoría</th></tr>
@@ -262,25 +261,26 @@
         </table>
       </div>
     </section>
-
-    <!-- CONFIGURACION VIEW -->
+    
     <section id="view-configuracion" class="view-section">
-      <div class="card card-glow" style="max-width: 400px; margin: 0 auto;">
+      <div class="card-glow-container" style="max-width: 440px; margin: 0 auto;">
+        <h3 style="margin-bottom: 18px;">Parámetros del Sistema</h3>
         <div class="form-group">
           <label>Tasa de Cambio (1 USD = ? CUP)</label>
           <input type="number" id="cfg-tasa">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 12px;">
           <label>Margen de Utilidad (%)</label>
           <input type="number" id="cfg-utilidad">
         </div>
-        <button class="btn" style="width:100%; justify-content:center;" onclick="guardarConfiguracion()">Actualizar Parámetros</button>
+        <div class="modal-footer" style="margin-top: 20px;">
+          <button class="btn" style="width:100%; justify-content:center;" onclick="guardarConfiguracion()">Actualizar Parámetros</button>
+        </div>
       </div>
     </section>
 
   </main>
 
-  <!-- MODAL PRODUCTO -->
   <div class="modal-overlay" id="modal-producto">
     <div class="modal">
       <div class="modal-header">
@@ -298,10 +298,10 @@
 
         <div class="form-group">
           <label>Categoría</label>
-          <div class="custom-select-wrapper">
+          <div class="custom-select-wrapper" style="width: 100%;">
             <div class="custom-select-trigger" id="select-trigger-prod-categoria" onclick="toggleDropdown('dropdown-prod-categoria')">
               <span>Seleccione Categoría</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-prod-categoria"></div>
             <input type="hidden" id="prod-categoria" value="">
@@ -310,10 +310,10 @@
 
         <div class="form-group">
           <label>Proveedor / Tienda</label>
-          <div class="custom-select-wrapper">
+          <div class="custom-select-wrapper" style="width: 100%;">
             <div class="custom-select-trigger" id="select-trigger-prod-tienda" onclick="toggleDropdown('dropdown-prod-tienda')">
               <span>Seleccione Proveedor</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-prod-tienda"></div>
             <input type="hidden" id="prod-tienda" value="">
@@ -327,10 +327,10 @@
 
         <div class="form-group">
           <label>Moneda Costo</label>
-          <div class="custom-select-wrapper">
+          <div class="custom-select-wrapper" style="width: 100%;">
             <div class="custom-select-trigger" id="select-trigger-prod-moneda" onclick="toggleDropdown('dropdown-prod-moneda')">
               <span>USD</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-prod-moneda">
               <div class="custom-option selected" onclick="seleccionarOpcion('prod-moneda', 'USD', 'USD', 'select-trigger-prod-moneda'); calcularPreview();">USD</div>
@@ -347,10 +347,10 @@
 
         <div class="form-group">
           <label>Estado del Stock</label>
-          <div class="custom-select-wrapper">
+          <div class="custom-select-wrapper" style="width: 100%;">
             <div class="custom-select-trigger" id="select-trigger-prod-estado" onclick="toggleDropdown('dropdown-prod-estado')">
               <span>Disponible</span>
-              <i data-lucide="chevron-down" class="arrow-icon"></i>
+              <i data-lucide="chevron-down"></i>
             </div>
             <div class="custom-options" id="dropdown-prod-estado">
               <div class="custom-option selected" onclick="seleccionarOpcion('prod-estado', 'Disponible', 'Disponible', 'select-trigger-prod-estado')">Disponible</div>
@@ -366,22 +366,73 @@
         <span class="preview-price-value" id="preview-precio">$0.00 CUP</span>
       </div>
 
-      <button class="btn" style="width: 100%; justify-content: center;" onclick="guardarProducto()">
-        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Producto
-      </button>
+      <div class="modal-footer">
+        <button class="btn" style="width: 100%; justify-content: center;" onclick="guardarProducto()">
+          <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Producto
+        </button>
+      </div>
     </div>
   </div>
 
-   <!-- MODAL VISOR DE IMAGEN AMPLIA -->
-<div class="modal-overlay" id="modal-visor-imagen" onclick="cerrarVisorImagen(event)">
-  <div class="image-lightbox-content" onclick="event.stopPropagation()">
-    <button class="btn-close-lightbox" onclick="closeModal('modal-visor-imagen')">&times;</button>
-    <img id="lightbox-img-src" src="" alt="Imagen del producto ampliada">
-    <div id="lightbox-img-title" class="lightbox-caption"></div>
-  </div>
-</div>
+  <div class="modal-overlay" id="modal-detalle-producto">
+    <div class="modal">
+      <div class="modal-header">
+        <h4>Detalles del Producto</h4>
+        <button class="btn-close-modal" onclick="closeModal('modal-detalle-producto')">✕</button>
+      </div>
+      
+      <div class="product-details-content" style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="width: 100%; height: 180px; border-radius: 16px; overflow: hidden; background: var(--bg-input);">
+          <img id="detail-prod-img" src="" alt="Producto" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <h3 id="detail-prod-nombre" style="font-size: 18px; font-weight: 800;">Nombre del Producto</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Categoría</span>
+            <div id="detail-prod-cat" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Proveedor</span>
+            <div id="detail-prod-tienda" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Costo Origen</span>
+            <div id="detail-prod-costo" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Estado</span>
+            <div id="detail-prod-estado" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+        </div>
 
-  <!-- MODAL PROVEEDOR -->
+        <div class="preview-price-box">
+          <span>Precio Venta (CUP):</span>
+          <span class="preview-price-value" id="detail-prod-precio">$0.00 CUP</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="closeModal('modal-detalle-producto')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-visor-imagen" onclick="cerrarVisorImagen(event)">
+    <div class="modal" style="max-width: 440px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h4 id="lightbox-img-title">Vista de Imagen</h4>
+        <button class="btn-close-modal" onclick="closeModal('modal-visor-imagen')">✕</button>
+      </div>
+      <div style="display: flex; justify-content: center; padding: 10px 0;">
+        <img id="lightbox-img-src" src="" alt="Ampliada" style="max-width: 100%; max-height: 55vh; border-radius: 16px; object-fit: contain;">
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="closeModal('modal-visor-imagen')">Cerrar Visor</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="modal-proveedor">
     <div class="modal">
       <div class="modal-header">
@@ -400,11 +451,12 @@
         <label>Teléfono de Contacto</label>
         <input type="text" id="prov-telefono">
       </div>
-      <button class="btn" style="width:100%; justify-content:center;" onclick="guardarProveedor()">Guardar</button>
+      <div class="modal-footer">
+        <button class="btn" style="width:100%; justify-content:center;" onclick="guardarProveedor()">Guardar Proveedor</button>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL CATEGORIA -->
   <div class="modal-overlay" id="modal-categoria">
     <div class="modal">
       <div class="modal-header">
@@ -415,10 +467,11 @@
         <label>Nombre de la Categoría</label>
         <input type="text" id="cat-nombre">
       </div>
-      <button class="btn" style="width:100%; justify-content:center;" onclick="guardarCategoria()">Guardar</button>
+      <div class="modal-footer">
+        <button class="btn" style="width:100%; justify-content:center;" onclick="guardarCategoria()">Guardar Categoría</button>
+      </div>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
