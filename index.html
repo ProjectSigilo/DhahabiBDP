@@ -10,7 +10,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="styles.css">
+  <!-- Enlace al archivo de estilos externo -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -35,6 +36,404 @@
         </div>
         <button type="submit" class="btn" style="width: 100%; justify-content: center; margin-top: 16px; padding: 12px;">Acceder</button>
       </form>
+    </div>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand-logo">
+      <img id="app-logo" src="https://cdn.dhahabi.ae/logo/dhahabi-market-logo-gradient-white.svg" alt="Dhahabi Mercado">
+      <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+    </div>
+    <ul class="menu">
+      <li class="menu-item active" onclick="handleMenuClick('dashboard', this)">
+        <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+      </li>
+      <li class="menu-item" onclick="handleMenuClick('productos', this)">
+        <i data-lucide="package"></i> <span>Productos</span>
+      </li>
+      <li class="menu-item" onclick="handleMenuClick('proveedores', this)">
+        <i data-lucide="users"></i> <span>Proveedores</span>
+      </li>
+      <li class="menu-item" onclick="handleMenuClick('categorias', this)">
+        <i data-lucide="layers"></i> <span>Categorías</span>
+      </li>
+      <li class="menu-item" onclick="handleMenuClick('configuracion', this)">
+        <i data-lucide="settings"></i> <span>Configuración</span>
+      </li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    
+    <div class="top-bar">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">
+          <i data-lucide="menu"></i>
+        </button>
+        <div id="view-title" class="header-title">Dashboard</div>
+      </div>
+
+      <div class="top-controls">
+        <div class="theme-switch-wrapper">
+          <span class="theme-label" style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">Modo Oscuro</span>
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle-checkbox" checked onchange="toggleTheme()">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <button class="btn-logout-styled" onclick="cerrarSesion()">
+          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i> <span class="logout-text">Salir</span>
+        </button>
+        <div class="user-avatar">
+          <i data-lucide="user" style="width: 20px; height: 20px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 1: DASHBOARD -->
+    <section id="view-dashboard" class="view-section active">
+      <div class="metrics-top-grid">
+        <div class="card card-glow-purple">
+          <div class="card-header">
+            <span class="card-title">Publicados</span>
+            <div class="card-icon-wrapper"><i data-lucide="box"></i></div>
+          </div>
+          <div class="card-value" id="metric-publicados">0</div>
+          <div class="card-subtext">+3 nuevos hoy</div>
+        </div>
+
+        <div class="card card-glow-amber">
+          <div class="card-header">
+            <span class="card-title">Agotados</span>
+            <div class="card-icon-wrapper"><i data-lucide="alert-triangle"></i></div>
+          </div>
+          <div class="card-value" id="metric-agotados">0</div>
+          <div class="card-subtext">Sin alertas pendientes</div>
+        </div>
+
+        <div class="card card-glow-blue">
+          <div class="card-header">
+            <span class="card-title">Tasa de Cambio</span>
+            <div class="card-icon-wrapper"><i data-lucide="repeat"></i></div>
+          </div>
+          <div class="card-value" style="font-size: 22px; color: #60A5FA;" id="metric-tasa">1 USD = $680 CUP</div>
+          <div class="card-subtext" style="color: #60A5FA;">Mercado Informal</div>
+        </div>
+
+        <div class="card card-glow-emerald">
+          <div class="card-header">
+            <span class="card-title">% Utilidad</span>
+            <div class="card-icon-wrapper"><i data-lucide="trending-up"></i></div>
+          </div>
+          <div class="card-value" style="color: #34D399;" id="metric-utilidad">30%</div>
+          <svg class="sparkline-svg" viewBox="0 0 100 30" fill="none" stroke="#34D399" stroke-width="2.5">
+            <path d="M0 25 Q 20 10, 40 18 T 80 5 T 100 2" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="metrics-bottom-grid">
+        <div class="card card-glow-rose">
+          <div class="card-header">
+            <span class="card-title">Proveedores</span>
+            <div class="card-icon-wrapper"><i data-lucide="git-fork"></i></div>
+          </div>
+          <div class="card-value" id="metric-proveedores">0</div>
+          <div class="card-subtext">Activos</div>
+        </div>
+      </div>
+
+      <div class="card-glow-container">
+        <div class="section-header">
+          <h3>Productos Modificados Hoy</h3>
+          <span class="badge-live"><span class="pulse-dot"></span> En vivo</span>
+        </div>
+        
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>FECHA/HORA</th>
+                <th>PRODUCTO</th>
+                <th>TIENDA</th>
+                <th>ESTADO</th>
+                <th>PRECIO ANTER. (CUP)</th>
+                <th>PRECIO NUEVO (CUP)</th>
+                <th>DIFERENCIA</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-cambios-hoy"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: PRODUCTOS -->
+    <section id="view-productos" class="view-section">
+      <div class="section-header">
+        <h3>Gestión de Productos</h3>
+        <button class="btn" onclick="abrirModalNuevoProducto()"><i data-lucide="plus"></i> Nuevo Producto</button>
+      </div>
+
+      <div class="filter-bar-container card-glow-container" style="padding: 16px !important;">
+        <div class="search-input-wrapper">
+          <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+          <input type="text" id="filter-search" placeholder="Buscar por nombre..." oninput="filtrarYOrdenarProductos()">
+        </div>
+
+        <div class="filter-controls-group">
+          <div class="custom-select-wrapper">
+            <div class="custom-select-trigger" id="select-trigger-categoria" onclick="toggleDropdown('dropdown-categoria')">
+              <span>Todas las Categorías</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-categoria"></div>
+            <input type="hidden" id="filter-categoria" value="">
+          </div>
+
+          <div class="custom-select-wrapper">
+            <div class="custom-select-trigger" id="select-trigger-tienda" onclick="toggleDropdown('dropdown-tienda')">
+              <span>Todos los Proveedores</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-tienda"></div>
+            <input type="hidden" id="filter-tienda" value="">
+          </div>
+
+          <div class="custom-select-wrapper">
+            <div class="custom-select-trigger" id="select-trigger-estado" onclick="toggleDropdown('dropdown-estado')">
+              <span>Todos los Estados</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-estado">
+              <div class="custom-option selected" onclick="seleccionarOpcion('filter-estado', '', 'Todos los Estados', 'select-trigger-estado')">Todos los Estados</div>
+              <div class="custom-option" onclick="seleccionarOpcion('filter-estado', 'Disponible', 'Disponible', 'select-trigger-estado')">Disponible</div>
+              <div class="custom-option" onclick="seleccionarOpcion('filter-estado', 'Agotado', 'Agotado', 'select-trigger-estado')">Agotado</div>
+            </div>
+            <input type="hidden" id="filter-estado" value="">
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container card-glow-container desktop-only-table">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th style="cursor: pointer;" onclick="cambiarOrden('nombre')">Producto <span id="sort-icon-nombre">⇅</span></th>
+              <th>Tienda</th>
+              <th>Costo Origen</th>
+              <th style="cursor: pointer;" onclick="cambiarOrden('precio')">Venta CUP <span id="sort-icon-precio">⇅</span></th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-productos"></tbody>
+        </table>
+      </div>
+
+      <div id="mobile-products-list" class="mobile-only-cards"></div>
+    </section> 
+
+    <!-- VIEW 3: PROVEEDORES -->
+    <section id="view-proveedores" class="view-section">
+      <div class="section-header">
+        <h3>Proveedores Registrados</h3>
+        <button class="btn" onclick="openModal('modal-proveedor')"><i data-lucide="plus"></i> Nuevo Proveedor</button>
+      </div>
+      <div class="table-container card-glow-container">
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Nombre / Tienda</th><th>Ubicación</th><th>Teléfono</th></tr>
+          </thead>
+          <tbody id="tabla-proveedores"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW 4: CATEGORIAS -->
+    <section id="view-categorias" class="view-section">
+      <div class="section-header">
+        <h3>Categorías Registradas</h3>
+        <button class="btn" onclick="openModal('modal-categoria')"><i data-lucide="plus"></i> Nueva Categoría</button>
+      </div>
+      <div class="table-container card-glow-container">
+        <table class="data-table">
+          <thead>
+            <tr><th>ID</th><th>Categoría</th></tr>
+          </thead>
+          <tbody id="tabla-categorias"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VIEW 5: CONFIGURACION -->
+    <section id="view-configuracion" class="view-section">
+      <div class="card-glow-container" style="max-width: 440px; margin: 0 auto;">
+        <h3 style="margin-bottom: 18px;">Parámetros del Sistema</h3>
+        <div class="form-group">
+          <label>Tasa de Cambio (1 USD = ? CUP)</label>
+          <input type="number" id="cfg-tasa">
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label>Margen de Utilidad (%)</label>
+          <input type="number" id="cfg-utilidad">
+        </div>
+        <div class="modal-footer" style="margin-top: 20px;">
+          <button class="btn" style="width:100%; justify-content:center;" onclick="guardarConfiguracion()">Actualizar Parámetros</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALS SECTION -->
+  <div class="modal-overlay" id="modal-producto">
+    <div class="modal">
+      <div class="modal-header">
+        <h4 id="modal-prod-titulo">Registrar / Actualizar Producto</h4>
+        <button class="btn-close-modal" onclick="closeModal('modal-producto')">✕</button>
+      </div>
+      
+      <div class="modal-form-grid">
+        <input type="hidden" id="prod-id">
+        
+        <div class="form-group span-full">
+          <label>Nombre del Producto</label>
+          <input type="text" id="prod-nombre" placeholder="Ej: Galletas Saltinas 200g">
+        </div>
+
+        <div class="form-group">
+          <label>Categoría</label>
+          <div class="custom-select-wrapper" style="width: 100%;">
+            <div class="custom-select-trigger" id="select-trigger-prod-categoria" onclick="toggleDropdown('dropdown-prod-categoria')">
+              <span>Seleccione Categoría</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-prod-categoria"></div>
+            <input type="hidden" id="prod-categoria" value="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Proveedor / Tienda</label>
+          <div class="custom-select-wrapper" style="width: 100%;">
+            <div class="custom-select-trigger" id="select-trigger-prod-tienda" onclick="toggleDropdown('dropdown-prod-tienda')">
+              <span>Seleccione Proveedor</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-prod-tienda"></div>
+            <input type="hidden" id="prod-tienda" value="">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Precio Costo</label>
+          <input type="number" step="0.01" id="prod-costo" placeholder="0.00" oninput="calcularPreview()">
+        </div>
+
+        <div class="form-group">
+          <label>Moneda Costo</label>
+          <div class="custom-select-wrapper" style="width: 100%;">
+            <div class="custom-select-trigger" id="select-trigger-prod-moneda" onclick="toggleDropdown('dropdown-prod-moneda')">
+              <span>USD</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-prod-moneda">
+              <div class="custom-option selected" onclick="seleccionarOpcion('prod-moneda', 'USD', 'USD', 'select-trigger-prod-moneda'); calcularPreview();">USD</div>
+              <div class="custom-option" onclick="seleccionarOpcion('prod-moneda', 'CUP', 'CUP', 'select-trigger-prod-moneda'); calcularPreview();">CUP</div>
+            </div>
+            <input type="hidden" id="prod-moneda" value="USD">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ID / Nombre Imagen</label>
+          <input type="text" id="prod-imagen" placeholder="Ej: 2435-1.jpg">
+        </div>
+
+        <div class="form-group">
+          <label>Estado del Stock</label>
+          <div class="custom-select-wrapper" style="width: 100%;">
+            <div class="custom-select-trigger" id="select-trigger-prod-estado" onclick="toggleDropdown('dropdown-prod-estado')">
+              <span>Disponible</span>
+              <i data-lucide="chevron-down"></i>
+            </div>
+            <div class="custom-options" id="dropdown-prod-estado">
+              <div class="custom-option selected" onclick="seleccionarOpcion('prod-estado', 'Disponible', 'Disponible', 'select-trigger-prod-estado')">Disponible</div>
+              <div class="custom-option" onclick="seleccionarOpcion('prod-estado', 'Agotado', 'Agotado', 'select-trigger-prod-estado')">Agotado</div>
+            </div>
+            <input type="hidden" id="prod-estado" value="Disponible">
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-price-box">
+        <span>Precio Venta Estimado:</span>
+        <span class="preview-price-value" id="preview-precio">$0.00 CUP</span>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn" style="width: 100%; justify-content: center;" onclick="guardarProducto()">
+          <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Producto
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-detalle-producto">
+    <div class="modal">
+      <div class="modal-header">
+        <h4>Detalles del Producto</h4>
+        <button class="btn-close-modal" onclick="closeModal('modal-detalle-producto')">✕</button>
+      </div>
+      
+      <div class="product-details-content" style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="width: 100%; height: 180px; border-radius: 16px; overflow: hidden; background: var(--bg-input);">
+          <img id="detail-prod-img" src="" alt="Producto" style="width: 100%; height: 100%; object-fit: cover;">
+        </div>
+        <h3 id="detail-prod-nombre" style="font-size: 18px; font-weight: 800;">Nombre del Producto</h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div style="background: rgba(128,128,128,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Categoría</span>
+            <div id="detail-prod-cat" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+          <div style="background: rgba(128,128,128,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Proveedor</span>
+            <div id="detail-prod-tienda" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+          <div style="background: rgba(128,128,128,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Costo Origen</span>
+            <div id="detail-prod-costo" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+          <div style="background: rgba(128,128,128,0.03); padding: 10px; border-radius: 10px; border: 1px solid var(--border-color);">
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Estado</span>
+            <div id="detail-prod-estado" style="font-weight: 700; margin-top: 2px;">-</div>
+          </div>
+        </div>
+
+        <div class="preview-price-box">
+          <span>Precio Venta (CUP):</span>
+          <span class="preview-price-value" id="detail-prod-precio">$0.00 CUP</span>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" style="width: 100%; justify-content: center;" onclick="closeModal('modal-detalle-producto')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-visor-imagen" onclick="cerrarVisorImagen(event)">
+    <div class="modal" style="max-width: 440px;" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h4 id="lightbox-img-title">Vista de Imagen</h4>
+        <button class="btn-close-modal" onclick="closeModal('modal-visor-imagen')">✕</button>
+      </div>
+      <div style="display: flex; justify-content: center; padding: 10px 0;">
+        <img id="lightbox-img-src" src="" alt="Ampliada" style="max-width: 100%; max-height: 55vh; border-radius: 16px; object-fit: contain;">
+           </form>
     </div>
   </div>
 
